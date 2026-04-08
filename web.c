@@ -18,8 +18,8 @@
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
 
-#define WIFI_SSID "JAYSSA MARIA"
-#define WIFI_PASSWORD "JJM07042005"
+#define WIFI_SSID "JAYSSA MARIA" //nome do roteador Wi-Fi a ser conectado
+#define WIFI_PASSWORD "JJM07042005" //senha do roteador Wi-Fi a ser conectado
 #define WIFI_AUTH CYW43_AUTH_WPA2_AES_PSK
 #define WEB_PORT 80
 #define WEB_BUFFER_SIZE 1024
