@@ -132,7 +132,7 @@ void pong_step(game_context_t *ctx) {
     }
 
     // Verifica se a IA marcou ponto ou se o jogador marcou ponto.
-    if (ctx->pong_ball_x < 0) {
+    if (ctx->pong_ball_x <= 0) {
         ctx->pong_ai_score++;
         if (ctx->pong_ai_score >= PONG_SCORE_LIMIT) {
             ctx->pong_game_over = true;
@@ -151,7 +151,7 @@ void pong_step(game_context_t *ctx) {
         }
     }
 
-    if (ctx->pong_ball_x > WIDTH) {
+    if (ctx->pong_ball_x >= WIDTH) {
         ctx->pong_player_score++;
         if (ctx->pong_player_score >= PONG_SCORE_LIMIT) {
             ctx->pong_game_over = true;

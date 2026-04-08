@@ -61,12 +61,16 @@ static void web_update_ip(void) {
         const char *ip = ipaddr_ntoa(&netif->ip_addr);
         if (ip != NULL) {
             web_set_ip("IP: %s", ip);
+            web_set_status("WIFI: OK");
             cyw43_arch_lwip_end();
             return;
         }
     }
     cyw43_arch_lwip_end();
     web_set_ip("IP: -");
+    if (wifi_connected) {
+        web_set_status("WIFI: WAIT");
+    }
 }
 
 // Analisa a requisição HTTP e modifica o estado do jogo conforme o parâmetro "game".
@@ -234,15 +238,15 @@ void web_init(game_context_t *ctx) {
     web_ctx = ctx;
 
     cyw43_arch_enable_sta_mode();
-    web_set_status("WIFI: CONECTANDO...");
+    web_set_status("WIFI: WAIT");
 
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, WIFI_AUTH, 10000) != 0) {
-        web_set_status("WIFI: FALHA");
+        web_set_status("WIFI: ERR");
         return;
     }
 
-    web_update_ip();
     wifi_connected = true;
+    web_update_ip();
     if (!web_create_server()) {
         wifi_connected = false;
     }
