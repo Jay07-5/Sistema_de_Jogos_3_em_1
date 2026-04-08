@@ -5,6 +5,22 @@
 #include "oled.h"
 #include "game.h"
 
+// pong.c implementa a versão simples de Pong.
+// Este módulo controla jogador, IA, movimento da bola, colisões, pontuação e fim de jogo.
+
+static int clamp_pong_speed(int speed) {
+    if (speed > 6) {
+        return 6;
+    }
+    if (speed < -6) {
+        return -6;
+    }
+    if (speed == 0) {
+        return 1;
+    }
+    return speed;
+}
+
 void reset_pong(game_context_t *ctx) {
     ctx->pong_player_y = 24;
     ctx->pong_ai_y = 24;
@@ -15,6 +31,7 @@ void reset_pong(game_context_t *ctx) {
     if (ctx->pong_ball_vy == 0) {
         ctx->pong_ball_vy = 1;
     }
+    // Velocidade inicial da bola é constante; a cada rebote ela pode acelerar.
     ctx->pong_player_score = 0;
     ctx->pong_ai_score = 0;
     ctx->pong_game_over = false;
@@ -24,6 +41,7 @@ void reset_pong(game_context_t *ctx) {
 
 void pong_step(game_context_t *ctx) {
     if (ctx->pong_game_over) {
+        // Exibe tela de fim de jogo e espera ação do jogador.
         if (!ctx->pong_game_over_sound_played) {
             audio_play_game_over();
             ctx->pong_game_over_sound_played = true;
@@ -53,16 +71,19 @@ void pong_step(game_context_t *ctx) {
         return;
     }
 
+    // Move o paddle do jogador com base no joystick vertical.
     ctx->pong_player_y += joystick_axis_value(joystick_y_raw()) * 3;
     ctx->pong_player_y = clamp_int(ctx->pong_player_y, 12, HEIGHT - PONG_PADDLE_H - 2);
 
     if (ctx->pong_ball_y + (PONG_BALL_SIZE / 2) > ctx->pong_ai_y + (PONG_PADDLE_H / 2)) {
-        ctx->pong_ai_y += 2;
+        ctx->pong_ai_y += 3;
     } else if (ctx->pong_ball_y + (PONG_BALL_SIZE / 2) < ctx->pong_ai_y + (PONG_PADDLE_H / 2)) {
-        ctx->pong_ai_y -= 2;
+        ctx->pong_ai_y -= 3;
     }
     ctx->pong_ai_y = clamp_int(ctx->pong_ai_y, 12, HEIGHT - PONG_PADDLE_H - 2);
+    // IA agora se move um pouco mais rápido e tenta seguir o centro da bola.
 
+    // Atualiza posição da bola.
     ctx->pong_ball_x += ctx->pong_ball_vx;
     ctx->pong_ball_y += ctx->pong_ball_vy;
 
@@ -76,30 +97,41 @@ void pong_step(game_context_t *ctx) {
         audio_play_pong_wall();
     }
 
+    // Verifica colisão da bola com o paddle do jogador.
     if (ctx->pong_ball_x <= 5 + PONG_PADDLE_W &&
         ctx->pong_ball_y + PONG_BALL_SIZE >= ctx->pong_player_y &&
         ctx->pong_ball_y <= ctx->pong_player_y + PONG_PADDLE_H) {
+        int ball_center_y = ctx->pong_ball_y + (PONG_BALL_SIZE / 2);
+        int paddle_center_y = ctx->pong_player_y + (PONG_PADDLE_H / 2);
+        int hit_offset = ball_center_y - paddle_center_y;
+
         ctx->pong_ball_x = 5 + PONG_PADDLE_W;
-        ctx->pong_ball_vx = 4;
-        ctx->pong_ball_vy = ((ctx->pong_ball_y - ctx->pong_player_y) / 3) - 2;
+        ctx->pong_ball_vx = clamp_pong_speed(abs(ctx->pong_ball_vx) + 1);
+        ctx->pong_ball_vy = clamp_int(hit_offset / 2, -4, 4);
         if (ctx->pong_ball_vy == 0) {
             ctx->pong_ball_vy = 1;
         }
         audio_play_pong_paddle();
     }
 
+    // Verifica colisão da bola com o paddle da IA.
     if (ctx->pong_ball_x + PONG_BALL_SIZE >= WIDTH - 6 - PONG_PADDLE_W &&
         ctx->pong_ball_y + PONG_BALL_SIZE >= ctx->pong_ai_y &&
         ctx->pong_ball_y <= ctx->pong_ai_y + PONG_PADDLE_H) {
+        int ball_center_y = ctx->pong_ball_y + (PONG_BALL_SIZE / 2);
+        int paddle_center_y = ctx->pong_ai_y + (PONG_PADDLE_H / 2);
+        int hit_offset = ball_center_y - paddle_center_y;
+
         ctx->pong_ball_x = WIDTH - 6 - PONG_PADDLE_W - PONG_BALL_SIZE;
-        ctx->pong_ball_vx = -4;
-        ctx->pong_ball_vy = ((ctx->pong_ball_y - ctx->pong_ai_y) / 3) - 2;
+        ctx->pong_ball_vx = clamp_pong_speed(-(abs(ctx->pong_ball_vx) + 1));
+        ctx->pong_ball_vy = clamp_int(hit_offset / 2, -4, 4);
         if (ctx->pong_ball_vy == 0) {
             ctx->pong_ball_vy = -1;
         }
         audio_play_pong_paddle();
     }
 
+    // Verifica se a IA marcou ponto ou se o jogador marcou ponto.
     if (ctx->pong_ball_x < 0) {
         ctx->pong_ai_score++;
         if (ctx->pong_ai_score >= PONG_SCORE_LIMIT) {

@@ -5,10 +5,14 @@
 #include "oled.h"
 #include "game.h"
 
+// snake.c implementa o jogo da cobrinha.
+// Controla a movimentação, colisões, comida e desenho da cobra.
+
 #define SNAKE_COLS (WIDTH / SNAKE_CELL)
 #define SNAKE_ROWS ((HEIGHT - SNAKE_BOARD_TOP) / SNAKE_CELL)
 
 static void reset_snake_food(game_context_t *ctx) {
+    // Gera uma posição aleatória para a comida, evitando sobreposição com a cobra.
     bool valid_position = false;
 
     while (!valid_position) {
@@ -26,6 +30,7 @@ static void reset_snake_food(game_context_t *ctx) {
 }
 
 void reset_snake(game_context_t *ctx) {
+    // Inicializa a cobra no centro do campo e zera as variáveis de jogo.
     ctx->snake_size = 4;
     ctx->snake_dir_x = 1;
     ctx->snake_dir_y = 0;
@@ -45,6 +50,7 @@ static void snake_handle_input(game_context_t *ctx) {
     int joy_x = joystick_axis_value(joystick_x_raw());
     int joy_y = joystick_axis_value(joystick_y_raw());
 
+    // Atualiza a direção da cobra evitando reversão imediata.
     if (joy_x == -1 && ctx->snake_dir_x != 1) {
         ctx->snake_dir_x = -1;
         ctx->snake_dir_y = 0;
@@ -61,6 +67,7 @@ static void snake_handle_input(game_context_t *ctx) {
 }
 
 void snake_step(game_context_t *ctx) {
+    // Atualiza um passo do jogo Snake a cada frame.
     if (ctx->snake_game_over) {
         if (!ctx->snake_game_over_sound_played) {
             audio_play_game_over();
@@ -86,9 +93,11 @@ void snake_step(game_context_t *ctx) {
         return;
     }
 
+    // Processa controle e toca som de movimento.
     snake_handle_input(ctx);
     audio_play_snake_move();
 
+    // Move cada segmento para posição do anterior e avança a cabeça.
     for (int i = ctx->snake_size; i > 0; i--) {
         ctx->snake_x[i] = ctx->snake_x[i - 1];
         ctx->snake_y[i] = ctx->snake_y[i - 1];
@@ -97,12 +106,14 @@ void snake_step(game_context_t *ctx) {
     ctx->snake_x[0] += ctx->snake_dir_x;
     ctx->snake_y[0] += ctx->snake_dir_y;
 
+    // Verifica colisão com as paredes.
     if (ctx->snake_x[0] < 0 || ctx->snake_x[0] >= SNAKE_COLS || ctx->snake_y[0] < 0 || ctx->snake_y[0] >= SNAKE_ROWS) {
         ctx->snake_game_over = true;
         update_best_score(&ctx->best_snake_score, ctx->snake_score);
         effects_trigger_game_over();
     }
 
+    // Verifica colisão com o próprio corpo.
     for (int i = 1; i < ctx->snake_size && !ctx->snake_game_over; i++) {
         if (ctx->snake_x[0] == ctx->snake_x[i] && ctx->snake_y[0] == ctx->snake_y[i]) {
             ctx->snake_game_over = true;
@@ -111,6 +122,7 @@ void snake_step(game_context_t *ctx) {
         }
     }
 
+    // Verifica se comeu a comida e cresce.
     if (!ctx->snake_game_over && ctx->snake_x[0] == ctx->snake_food_x && ctx->snake_y[0] == ctx->snake_food_y) {
         ctx->snake_score++;
         if (ctx->snake_size < SNAKE_MAX_SIZE - 1) {
@@ -121,6 +133,7 @@ void snake_step(game_context_t *ctx) {
         audio_play_snake_eat();
     }
 
+    // Desenha o campo, a pontuação, a comida e a cobra.
     oled_clear();
     draw_frame();
     draw_header("SNAKE", ctx->snake_score, ctx->best_snake_score);

@@ -5,9 +5,13 @@
 #include "oled.h"
 #include "game.h"
 
+// flappy.c contém a lógica do jogo Bird (Flappy Bird).
+// Controla voos do pássaro, tubos, colisões e pontuação.
+
 static void update_pipe(pipe_t *pipe) {
     pipe->x -= 3;
     if (pipe->x < -FLAPPY_PIPE_WIDTH) {
+        // Quando o cano sai da esquerda, reposiciona-o à direita.
         pipe->x = WIDTH + 18;
         pipe->gap_y = 12 + (rand() % 24);
         pipe->counted = false;
@@ -20,6 +24,7 @@ static bool flappy_collides_with_pipe(const game_context_t *ctx, const pipe_t *p
     bool hits_top = ctx->bird_y <= pipe->gap_y;
     bool hits_bottom = ctx->bird_y + FLAPPY_BIRD_SIZE >= pipe->gap_y + FLAPPY_GAP;
 
+    // Retorna true se o pássaro colide com o cano atual.
     return overlaps_x && (hits_top || hits_bottom);
 }
 
@@ -39,6 +44,7 @@ void reset_flappy(game_context_t *ctx) {
 
 void flappy_step(game_context_t *ctx) {
     if (ctx->flappy_game_over) {
+        // Exibe a tela de fim de jogo do Flappy Bird.
         if (!ctx->flappy_game_over_sound_played) {
             audio_play_flappy_die();
             ctx->flappy_game_over_sound_played = true;
@@ -64,16 +70,19 @@ void flappy_step(game_context_t *ctx) {
     }
 
     if (button_pressed() || joystick_axis_value(joystick_y_raw()) == -1) {
+        // Botão ou joystick para cima faz o pássaro subir.
         ctx->bird_velocity = -4;
         audio_play_flappy_jump();
     }
 
+    // Gravidade simples aumenta velocidade para baixo a cada frame.
     ctx->bird_velocity += 1;
     if (ctx->bird_velocity > 3) {
         ctx->bird_velocity = 3;
     }
     ctx->bird_y += ctx->bird_velocity;
 
+    // Colisão com teto ou chão também termina o jogo.
     if (ctx->bird_y < 12 || ctx->bird_y > HEIGHT - FLAPPY_BIRD_SIZE - 1) {
         ctx->flappy_game_over = true;
         update_best_score(&ctx->best_flappy_score, ctx->flappy_score);

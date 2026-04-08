@@ -4,6 +4,9 @@
 #include <stddef.h>
 #include <string.h>
 
+// oled.c é o driver do display OLED.
+// Ele mantém um buffer de pixels em memória e envia para o display via I2C.
+
 #include "hardware/gpio.h"
 
 #define OLED_PAGES (HEIGHT / 8)
@@ -57,6 +60,7 @@ static const uint8_t font_upper[26][5] = {
 };
 
 static bool oled_try_address(i2c_inst_t *i2c, uint8_t address) {
+    // Tenta iniciar comunicação com o display no endereço I2C fornecido.
     uint8_t packet[2] = {0x00, 0xAE};
     int result = i2c_write_blocking(i2c, address, packet, 2, false);
     return result >= 0;
@@ -140,6 +144,7 @@ static void oled_send_data(const uint8_t *data, size_t length) {
 }
 
 static void oled_set_pixel(int x, int y, bool color) {
+    // Define um pixel no buffer em memória. Não envia imediatamente ao display.
     if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
         return;
     }
@@ -185,6 +190,7 @@ static const uint8_t *oled_glyph_for_char(char ch) {
 }
 
 static void oled_draw_char(int x, int y, char raw_ch, bool color) {
+    // Desenha um caractere usando fontes bitmap fixas.
     char ch = (char)toupper((unsigned char)raw_ch);
     const uint8_t *glyph = oled_glyph_for_char(ch);
 
@@ -237,6 +243,7 @@ static void oled_draw_boot_pattern(void) {
 }
 
 void oled_init(void) {
+    // Inicializa o display OLED e configura o modo de exibição.
     sleep_ms(100);
     oled_detect_bus_and_address();
 
@@ -289,6 +296,7 @@ void oled_clear(void) {
 }
 
 void oled_update(void) {
+    // Envia o buffer atual para o display físico.
     if (!oled_ready) {
         return;
     }
@@ -304,6 +312,7 @@ void oled_update(void) {
 }
 
 void oled_rect(int x, int y, int w, int h, int color) {
+    // Desenha um retângulo preenchido no buffer do display.
     if (w <= 0 || h <= 0) {
         return;
     }

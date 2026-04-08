@@ -6,6 +6,8 @@
 #define LED_G_PIN 12
 #define LED_B_PIN 11
 
+// effects.c comanda os LEDs RGB para mostrar um efeito visual de fim de jogo.
+
 static bool effect_active = false;
 static int effect_step = 0;
 static absolute_time_t effect_deadline;
@@ -17,6 +19,7 @@ static void leds_all_off(void) {
 }
 
 void effects_init(void) {
+    // Configura os pinos dos LEDs como saída e garante que estejam apagados.
     gpio_init(LED_R_PIN);
     gpio_set_dir(LED_R_PIN, GPIO_OUT);
     gpio_init(LED_G_PIN);
@@ -33,6 +36,7 @@ void effects_trigger_game_over(void) {
 }
 
 void effects_update(void) {
+    // Atualiza o estado do efeito de LED quando ativo.
     if (!effect_active) {
         return;
     }

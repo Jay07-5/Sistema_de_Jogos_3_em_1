@@ -50,6 +50,7 @@ add_executable(sistemadejogosprojeto
     pong.c
     flappy.c
     oled.c
+    web.c
 )
 
 pico_set_program_name(sistemadejogosprojeto "sistemadejogosprojeto")
@@ -63,7 +64,8 @@ target_link_libraries(sistemadejogosprojeto
     hardware_adc
     hardware_i2c
     hardware_pwm
-    pico_cyw43_arch_none
+    pico_lwip
+    pico_cyw43_arch_lwip_poll
 )
 
 target_include_directories(sistemadejogosprojeto PRIVATE

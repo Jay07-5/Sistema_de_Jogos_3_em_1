@@ -7,6 +7,9 @@
 #include "hardware/pwm.h"
 #include "pico/stdlib.h"
 
+// audio.c controla a geração de sons no buzzer do Pico.
+// Cada efeito de áudio é definido como uma sequência de notas e durações.
+
 #define BUZZER_PIN 21
 #define AUDIO_CLOCK_DIV 4.0f
 #define AUDIO_DUTY_DIVISOR 48u
@@ -94,6 +97,7 @@ static bool menu_sequence = false;
 static absolute_time_t note_deadline;
 
 static void audio_stop_tone(void) {
+    // Para o tom atual do buzzer.
     pwm_set_gpio_level(BUZZER_PIN, 0);
 }
 
@@ -126,6 +130,7 @@ static void audio_begin_sequence(const note_t *sequence, size_t length, bool is_
 }
 
 void audio_init(void) {
+    // Configura o buzzer como saída PWM para gerar tons.
     gpio_set_function(BUZZER_PIN, GPIO_FUNC_PWM);
     uint slice_num = pwm_gpio_to_slice_num(BUZZER_PIN);
     pwm_set_clkdiv(slice_num, AUDIO_CLOCK_DIV);
@@ -194,6 +199,7 @@ void audio_play_flappy_die(void) {
 }
 
 void audio_update(void) {
+    // Toca a sequência de notas no tempo correto.
     if (active_sequence == NULL) {
         return;
     }
