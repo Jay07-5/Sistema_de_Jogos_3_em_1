@@ -69,7 +69,9 @@ static void web_update_ip(void) {
     cyw43_arch_lwip_end();
     web_set_ip("IP: -");
     if (wifi_connected) {
-        web_set_status("WIFI: WAIT");
+        web_set_status("WIFI: CONECTANDO...");
+    } else {
+        web_set_status("WIFI: ERRO");
     }
 }
 
@@ -118,10 +120,10 @@ static const char *web_generate_page(void) {
     else if (web_ctx->estado_atual == STATE_FLAPPY) current = "Bird";
 
     snprintf(page, sizeof(page),
-        "<html><head><meta charset=\"utf-8\"><title>Arcade 2040</title>"
+        "<html><head><meta charset=\"utf-8\"><title>Sistema de Jogos</title>"
         "<style>body{font-family:Arial,Helvetica,sans-serif;text-align:center;}"
         "button{width:120px;height:40px;margin:6px;font-size:16px;}</style></head>"
-        "<body><h1>Arcade 2040</h1>"
+        "<body><h1>Sistema de Jogos</h1>"
         "<p>%s</p><p>Jogo atual: %s</p>"
         "<p><a href=\"/?game=menu\"><button>Menu</button></a>"
         "<a href=\"/?game=snake\"><button>Cobra</button></a>"
@@ -236,12 +238,14 @@ static bool web_create_server(void) {
 // possam alterar o estado do jogo remotamente.
 void web_init(game_context_t *ctx) {
     web_ctx = ctx;
+    wifi_connected = false;
 
     cyw43_arch_enable_sta_mode();
-    web_set_status("WIFI: WAIT");
+    web_set_status("WIFI: CONECTANDO...");
 
-    if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, WIFI_AUTH, 10000) != 0) {
-        web_set_status("WIFI: ERR");
+    if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, WIFI_AUTH, 15000) != 0) {
+        // Tenta manter o status como conectando ao invés de erro imediato
+        web_set_status("WIFI: CONECTANDO...");
         return;
     }
 
@@ -249,6 +253,7 @@ void web_init(game_context_t *ctx) {
     web_update_ip();
     if (!web_create_server()) {
         wifi_connected = false;
+        web_set_status("WIFI: CONECTANDO...");
     }
 }
 

@@ -234,8 +234,8 @@ static void oled_draw_boot_pattern(void) {
     oled_rect(2, 2, WIDTH - 4, HEIGHT - 4, 0);
     oled_rect(6, 6, WIDTH - 12, HEIGHT - 12, 1);
     oled_rect(10, 10, WIDTH - 20, HEIGHT - 20, 0);
-    oled_text(22, 20, "ARCADE 2040", 1);
-    oled_text(26, 34, "OLED TESTE", 1);
+    oled_text(10, 20, "SISTEMA DE JOGOS", 1);
+    oled_text(28, 34, "PICO W", 1);
     oled_update();
     sleep_ms(700);
     oled_clear();

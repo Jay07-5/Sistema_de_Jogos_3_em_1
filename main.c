@@ -71,8 +71,12 @@ int main(void) {
     // interface HTTP para controle do jogo via navegador.
     web_init(&game);
 
-    // Atualiza o menu imediatamente para mostrar o status/IP do Wi-Fi.
-    draw_menu(&game);
+    // Aguarda um pouco para permitir que a conexão Wi-Fi se estabilize.
+    for (int i = 0; i < 5; i++) {
+        sleep_ms(200);
+        web_poll(&game);
+        draw_menu(&game);
+    }
 
     // Loop principal do jogo. Atualiza áudio, efeitos e a lógica do estado atual.
     while (true) {

@@ -47,29 +47,26 @@ void draw_menu(game_context_t *ctx) {
     draw_frame();
 
     oled_rect(6, 4, 116, 12, 1);
-    oled_text(27, 7, "ARCADE 2040", 0);
+    oled_text(16, 7, "SISTEMA DE JOGOS", 0);
 
-    oled_text(8, 20, "Y move", 1);
-    oled_text(66, 20, "A abre", 1);
-    oled_text(66, 27, "B volta", 1);
-    // Exibe o status e o IP da conexão Wi-Fi no OLED.
-    // Essas strings são atualizadas pelo módulo web em web_poll().
-    oled_text(8, 44, web_status_string(), 1);
-    oled_text(8, 52, web_ip_string(), 1);
+    oled_text(8, 18, "Y: move", 1);
+    oled_text(56, 18, "A: abre", 1);
+    oled_text(8, 26, web_status_string(), 1);
 
-    draw_menu_card(28, menu_options[0], ctx->menu_option == 0, 10);
-    draw_menu_card(39, menu_options[1], ctx->menu_option == 1, 10);
-    draw_menu_card(50, menu_options[2], ctx->menu_option == 2, 10);
+    draw_menu_card(34, menu_options[0], ctx->menu_option == 0, 10);
+    draw_menu_card(44, menu_options[1], ctx->menu_option == 1, 10);
+    draw_menu_card(54, menu_options[2], ctx->menu_option == 2, 10);
+    draw_menu_card(64, menu_options[3], ctx->menu_option == 3, 10);
 
-    if (ctx->menu_option == 3) {
-        oled_rect(84, 50, 32, 10, 1);
-        oled_text(90, 52, "SAIR", 0);
+    if (ctx->menu_option == 4) {
+        oled_rect(84, 54, 32, 10, 1);
+        oled_text(90, 56, "SAIR", 0);
     } else {
-        oled_rect(84, 50, 32, 1, 1);
-        oled_rect(84, 59, 32, 1, 1);
-        oled_rect(84, 50, 1, 10, 1);
-        oled_rect(115, 50, 1, 10, 1);
-        oled_text(90, 52, "SAIR", 1);
+        oled_rect(84, 54, 32, 1, 1);
+        oled_rect(84, 63, 32, 1, 1);
+        oled_rect(84, 54, 1, 10, 1);
+        oled_rect(115, 54, 1, 10, 1);
+        oled_text(90, 56, "SAIR", 1);
     }
 
     oled_update();
@@ -83,6 +80,27 @@ void draw_menu(game_context_t *ctx) {
             enter_state(ctx, STATE_PONG);
         } else if (ctx->menu_option == 2) {
             enter_state(ctx, STATE_FLAPPY);
+        } else if (ctx->menu_option == 3) {
+            // Exibe a tela de informações Wi-Fi / IP
+            oled_clear();
+            draw_frame();
+            oled_rect(6, 4, 116, 12, 1);
+            oled_text(20, 7, "CONEXAO WiFi", 0);
+            oled_text(8, 20, web_status_string(), 1);
+            oled_text(8, 28, web_ip_string(), 1);
+            oled_text(8, 40, "Acesse pelo navegador", 1);
+            oled_text(8, 48, "do seu celular", 1);
+            oled_text(8, 56, "Pressione B para voltar", 1);
+            oled_update();
+            
+            // Aguarda pressão de B para voltar ao menu
+            while (!back_pressed()) {
+                sleep_ms(50);
+                web_poll(ctx);
+            }
+            while (back_pressed()) {
+                sleep_ms(50);
+            }
         } else {
             oled_clear();
             draw_frame();

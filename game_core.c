@@ -15,6 +15,7 @@ const char *menu_options[MENU_OPTIONS] = {
     "Cobra",
     "Pong",
     "Bird",
+    "WiFi",
     "Sair"
 };
 
