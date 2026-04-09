@@ -5,7 +5,7 @@
 O Sistema de Jogos 3 em 1 é um projeto inovador desenvolvido para a placa Raspberry Pi Pico W, que combina a nostalgia dos jogos retrô clássicos com tecnologias modernas de conectividade e interfaces digitais. Inspirado nos consoles portáteis dos anos 80 e 90, o sistema oferece uma experiência de jogo imersiva em um dispositivo compacto e acessível.
 
 ### Funcionalidades Principais:
-- **Três Jogos Clássicos**: Implementação fiel de Snake, Pong e Flappy Bird, com mecânicas originais e controles intuitivos.
+- **Três Jogos Clássicos**: Implementação de Snake, Pong e Flappy Bird, com mecânicas originais e controles intuitivos.
 - **Interface OLED**: Display monocromático de alta resolução para gráficos nítidos e menus responsivos.
 - **Controle Dual**: Suporte a controles físicos locais via joystick analógico e botões, além de controle remoto via navegador web.
 - **Conectividade Wi-Fi**: Servidor HTTP embarcado permite acesso remoto em tempo real, transformando qualquer dispositivo com navegador em controle do jogo.
