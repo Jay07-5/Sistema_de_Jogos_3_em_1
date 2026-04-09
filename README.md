@@ -2,7 +2,7 @@
 
 ## Apresentação do Projeto
 
-O Sistema de Jogos Arcade 2040 é um projeto inovador desenvolvido para a placa Raspberry Pi Pico W, que combina a nostalgia dos jogos retrô clássicos com tecnologias modernas de conectividade e interfaces digitais. Inspirado nos consoles portáteis dos anos 80 e 90, o sistema oferece uma experiência de jogo imersiva em um dispositivo compacto e acessível.
+O Sistema de Jogos 3 em 1 é um projeto inovador desenvolvido para a placa Raspberry Pi Pico W, que combina a nostalgia dos jogos retrô clássicos com tecnologias modernas de conectividade e interfaces digitais. Inspirado nos consoles portáteis dos anos 80 e 90, o sistema oferece uma experiência de jogo imersiva em um dispositivo compacto e acessível.
 
 ### Funcionalidades Principais:
 - **Três Jogos Clássicos**: Implementação fiel de Snake, Pong e Flappy Bird, com mecânicas originais e controles intuitivos.
@@ -16,17 +16,9 @@ O Sistema de Jogos Arcade 2040 é um projeto inovador desenvolvido para a placa 
 - **Software**: Firmware C otimizado usando Pico SDK, pilha de rede lwIP para Wi-Fi, drivers customizados para OLED e áudio.
 - **Conectividade**: Protocolo HTTP para interface web, com página HTML responsiva para controle remoto.
 
-### Público-Alvo:
-- Entusiastas de jogos retrô buscando experiências modernas.
-- Estudantes e profissionais de engenharia embarcada interessados em projetos práticos.
-- Desenvolvedores explorando IoT e aplicações conectadas.
-- Educadores utilizando o projeto como exemplo de integração hardware-software.
-
-O projeto serve como ponte entre o passado e o futuro dos jogos, demonstrando como conceitos clássicos podem ser revitalizados com tecnologia contemporânea.
-
 ## Objetivo
 
-O objetivo principal do Sistema de Jogos Arcade 2040 é criar um dispositivo de entretenimento portátil e acessível que combine jogos clássicos com tecnologias modernas, servindo como plataforma educacional e demonstrativa para integração de sistemas embarcados.
+O objetivo principal do Sistema de Jogos 3 em 1 é criar um dispositivo de entretenimento portátil e acessível que combine jogos clássicos com tecnologias modernas, servindo como plataforma educacional e demonstrativa para integração de sistemas embarcados.
 
 ### Objetivos Específicos:
 - **Entretenimento Acessível**: Oferecer jogos clássicos em hardware de baixo custo, democratizando o acesso a experiências de jogo retrô.
