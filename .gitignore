@@ -1,2 +1,34 @@
-build
-!.vscode/*
+# Build directories
+/build/
+/build-*/
+/cmake-build-*/
+
+# CMake and Ninja generated files
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+build.ninja
+.ninja_deps
+.ninja_log
+CMakeFiles/
+
+# Generated binaries and maps
+*.bin
+*.dis
+*.elf
+*.hex
+*.map
+*.uf2
+*.o
+*.obj
+*.a
+*.lib
+
+# Build logs and generated config
+*.log
+*.tmp
+generated/
+
+# VS Code local machine settings
+.vscode/c_cpp_properties.json
+.vscode/cmake-kits.json
