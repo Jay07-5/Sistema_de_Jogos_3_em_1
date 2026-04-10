@@ -446,6 +446,8 @@ _Python3_EXECUTABLE:INTERNAL=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pytho
 //Python3 Properties
 _Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;9;13;64;;;abi3;C:\Program Files\Raspberry Pi\Pico SDK v1.5.1\python\Lib;C:\Program Files\Raspberry Pi\Pico SDK v1.5.1\python\Lib;C:\Program Files\Raspberry Pi\Pico SDK v1.5.1\python\Lib\site-packages;C:\Program Files\Raspberry Pi\Pico SDK v1.5.1\python\Lib\site-packages
 _Python3_INTERPRETER_SIGNATURE:INTERNAL=eeb9aaf4a8cb6700659f9ec0bcec52e7
+//Interpreter reason failure
+_Python3_Interpreter_REASON_FAILURE:INTERNAL=
 //NumPy reason failure
 _Python3_NumPy_REASON_FAILURE:INTERNAL=
 
