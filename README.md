@@ -140,12 +140,6 @@ Este projeto não utiliza inteligência artificial avançada ou aprendizado de m
   - **Redes Neurais**: Treinar uma rede neural básica (usando bibliotecas como TensorFlow Lite for Microcontrollers) para reconhecer e reagir a estilos de jogo.
   - **Adaptação Dinâmica**: Ajustar dificuldade baseada no desempenho do jogador, tornando a IA mais desafiadora ao longo do tempo.
 
-### Aplicações Futuras de IA:
-- **Geração Procedural**: IA para criar níveis dinâmicos em jogos como Snake ou Flappy Bird.
-- **Reconhecimento de Padrões**: Detectar gestos do joystick para comandos especiais.
-- **Otimização**: Algoritmos genéticos para balancear dificuldade dos jogos.
-- **Interação com Usuário**: Análise de comportamento para personalizar experiência de jogo.
-
 A implementação atual serve como ponto de partida educacional para explorar IA em sistemas com recursos limitados, demonstrando que até lógica simples pode criar experiências de jogo envolventes.
 
 ## Conclusão

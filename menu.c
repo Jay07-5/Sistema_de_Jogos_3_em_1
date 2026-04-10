@@ -8,20 +8,27 @@
 // menu.c desenha e processa o menu principal do jogo.
 // O menu permite escolher entre Cobra, Pong, Bird e sair.
 
+enum {
+    MENU_CARD_X = 6,
+    MENU_CARD_W = 116,
+    MENU_CARD_H = 7,
+    MENU_TEXT_X = 28
+};
+
 static void draw_menu_card(int y, const char *label, bool selected, int icon_width) {
     if (selected) {
         // Desenha o item selecionado com fundo preenchido.
-        oled_rect(6, y, 116, 10, 1);
-        oled_rect(10, y + 2, 4, 6, 0);
-        oled_rect(18, y + 2, icon_width, 5, 0);
-        oled_text(36, y + 2, label, 0);
+        oled_rect(MENU_CARD_X, y, MENU_CARD_W, MENU_CARD_H, 1);
+        oled_rect(10, y + 2, 4, 3, 0);
+        oled_rect(18, y + 2, icon_width, 2, 0);
+        oled_text(MENU_TEXT_X, y + 1, label, 0);
     } else {
-        oled_rect(6, y, 116, 1, 1);
-        oled_rect(6, y + 9, 116, 1, 1);
-        oled_rect(6, y, 1, 10, 1);
-        oled_rect(121, y, 1, 10, 1);
-        oled_rect(18, y + 2, icon_width, 5, 1);
-        oled_text(36, y + 2, label, 1);
+        oled_rect(MENU_CARD_X, y, MENU_CARD_W, 1, 1);
+        oled_rect(MENU_CARD_X, y + MENU_CARD_H - 1, MENU_CARD_W, 1, 1);
+        oled_rect(MENU_CARD_X, y, 1, MENU_CARD_H, 1);
+        oled_rect(MENU_CARD_X + MENU_CARD_W - 1, y, 1, MENU_CARD_H, 1);
+        oled_rect(18, y + 2, icon_width, 2, 1);
+        oled_text(MENU_TEXT_X, y + 1, label, 1);
     }
 }
 
@@ -46,28 +53,18 @@ void draw_menu(game_context_t *ctx) {
     oled_clear();
     draw_frame();
 
-    oled_rect(6, 4, 116, 12, 1);
-    oled_text(16, 7, "SISTEMA DE JOGOS", 0);
+    oled_rect(6, 3, 116, 10, 1);
+    oled_text(16, 5, "SISTEMA DE JOGOS", 0);
 
-    oled_text(8, 18, "Y: move", 1);
-    oled_text(56, 18, "A: abre", 1);
-    oled_text(8, 26, web_status_string(), 1);
+    oled_text(8, 15, "Y move", 1);
+    oled_text(54, 15, "A abre", 1);
+    oled_text(8, 23, web_status_string(), 1);
 
-    draw_menu_card(34, menu_options[0], ctx->menu_option == 0, 10);
-    draw_menu_card(44, menu_options[1], ctx->menu_option == 1, 10);
-    draw_menu_card(54, menu_options[2], ctx->menu_option == 2, 10);
-    draw_menu_card(64, menu_options[3], ctx->menu_option == 3, 10);
-
-    if (ctx->menu_option == 4) {
-        oled_rect(84, 54, 32, 10, 1);
-        oled_text(90, 56, "SAIR", 0);
-    } else {
-        oled_rect(84, 54, 32, 1, 1);
-        oled_rect(84, 63, 32, 1, 1);
-        oled_rect(84, 54, 1, 10, 1);
-        oled_rect(115, 54, 1, 10, 1);
-        oled_text(90, 56, "SAIR", 1);
-    }
+    draw_menu_card(29, menu_options[0], ctx->menu_option == 0, 6);
+    draw_menu_card(36, menu_options[1], ctx->menu_option == 1, 6);
+    draw_menu_card(43, menu_options[2], ctx->menu_option == 2, 6);
+    draw_menu_card(50, menu_options[3], ctx->menu_option == 3, 6);
+    draw_menu_card(57, menu_options[4], ctx->menu_option == 4, 6);
 
     oled_update();
 
