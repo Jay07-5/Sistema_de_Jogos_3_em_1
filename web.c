@@ -26,9 +26,11 @@
 
 static struct tcp_pcb *http_pcb = NULL;
 static bool wifi_connected = false;
+static bool server_started = false;
 static game_context_t *web_ctx = NULL;
 static char status_text[40] = "WIFI: DESLIGADO";
 static char ip_text[40] = "IP: -";
+static absolute_time_t next_wifi_retry_at;
 
 // Atualiza a string de status do Wi-Fi para exibir no OLED.
 static void web_set_status(const char *fmt, ...) {
@@ -202,6 +204,10 @@ static err_t web_accept_callback(void *arg, struct tcp_pcb *newpcb, err_t err) {
 }
 
 static bool web_create_server(void) {
+    if (server_started && http_pcb != NULL) {
+        return true;
+    }
+
     cyw43_arch_lwip_begin();
     http_pcb = tcp_new();
     if (http_pcb == NULL) {
@@ -229,6 +235,7 @@ static bool web_create_server(void) {
     tcp_accept(http_pcb, web_accept_callback);
     cyw43_arch_lwip_end();
 
+    server_started = true;
     web_set_status("WIFI: CONECTADO");
     return true;
 }
@@ -239,13 +246,15 @@ static bool web_create_server(void) {
 void web_init(game_context_t *ctx) {
     web_ctx = ctx;
     wifi_connected = false;
+    server_started = false;
+    next_wifi_retry_at = get_absolute_time();
 
     cyw43_arch_enable_sta_mode();
     web_set_status("WIFI: CONECTANDO...");
 
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, WIFI_AUTH, 15000) != 0) {
-        // Tenta manter o status como conectando ao invés de erro imediato
-        web_set_status("WIFI: CONECTANDO...");
+        web_set_status("WIFI: ERRO");
+        next_wifi_retry_at = make_timeout_time_ms(3000);
         return;
     }
 
@@ -253,18 +262,39 @@ void web_init(game_context_t *ctx) {
     web_update_ip();
     if (!web_create_server()) {
         wifi_connected = false;
-        web_set_status("WIFI: CONECTANDO...");
+        next_wifi_retry_at = make_timeout_time_ms(3000);
+        web_set_status("WIFI: ERRO SERVIDOR");
     }
 }
 
 // Deve ser chamada no loop principal para processar eventos Wi-Fi e
 // atualizar o endereço IP exibido no OLED.
 void web_poll(game_context_t *ctx) {
-    if (!wifi_connected) {
-        return;
-    }
-
     (void)ctx;
     cyw43_arch_poll();
-    web_update_ip();
+
+    if (!wifi_connected && absolute_time_diff_us(get_absolute_time(), next_wifi_retry_at) <= 0) {
+        web_set_status("WIFI: CONECTANDO...");
+        if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, WIFI_AUTH, 10000) == 0) {
+            wifi_connected = true;
+            web_update_ip();
+            if (!web_create_server()) {
+                wifi_connected = false;
+                next_wifi_retry_at = make_timeout_time_ms(3000);
+            }
+        } else {
+            web_set_status("WIFI: ERRO");
+            next_wifi_retry_at = make_timeout_time_ms(3000);
+        }
+    }
+
+    if (wifi_connected) {
+        web_update_ip();
+        if (!server_started) {
+            if (!web_create_server()) {
+                wifi_connected = false;
+                next_wifi_retry_at = make_timeout_time_ms(3000);
+            }
+        }
+    }
 }

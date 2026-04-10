@@ -14,6 +14,7 @@
 // Inicializa o hardware, prepara o contexto do jogo e entra no loop principal.
 int main(void) {
     game_context_t game;
+    bool oled_available = false;
 
     // Inicializa todas as interfaces padrão (UART, USB CDC, etc.).
     stdio_init_all();
@@ -27,19 +28,14 @@ int main(void) {
     audio_init();
     effects_init();
     oled_init();
+    oled_available = oled_is_ready();
 
-    // Verifica se o OLED respondeu corretamente; caso contrário, pisca o LED em erro.
-    if (!oled_is_ready()) {
-        while (true) {
-            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-            sleep_ms(150);
-            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-            sleep_ms(150);
-            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-            sleep_ms(150);
-            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-            sleep_ms(600);
-        }
+    // Não trava o firmware se o OLED não responder.
+    // Isso permite validar joystick, áudio e Wi-Fi mesmo com o display desconectado.
+    if (!oled_available) {
+        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+        sleep_ms(80);
+        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
     }
 
     // Inicializa o ADC para leitura do joystick.
@@ -65,7 +61,9 @@ int main(void) {
 
     // Inicia o contexto de jogo com valores padrão e posição inicial.
     game_init_context(&game);
-    draw_menu(&game);
+    if (oled_available) {
+        draw_menu(&game);
+    }
 
     // Inicializa o módulo web que conecta o Pico W ao Wi-Fi e cria a
     // interface HTTP para controle do jogo via navegador.
@@ -75,7 +73,9 @@ int main(void) {
     for (int i = 0; i < 5; i++) {
         sleep_ms(200);
         web_poll(&game);
-        draw_menu(&game);
+        if (oled_available) {
+            draw_menu(&game);
+        }
     }
 
     // Loop principal do jogo. Atualiza áudio, efeitos e a lógica do estado atual.

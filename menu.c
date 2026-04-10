@@ -78,22 +78,19 @@ void draw_menu(game_context_t *ctx) {
         } else if (ctx->menu_option == 2) {
             enter_state(ctx, STATE_FLAPPY);
         } else if (ctx->menu_option == 3) {
-            // Exibe a tela de informações Wi-Fi / IP
-            oled_clear();
-            draw_frame();
-            oled_rect(6, 4, 116, 12, 1);
-            oled_text(20, 7, "CONEXAO WiFi", 0);
-            oled_text(8, 20, web_status_string(), 1);
-            oled_text(8, 28, web_ip_string(), 1);
-            oled_text(8, 40, "Acesse pelo navegador", 1);
-            oled_text(8, 48, "do seu celular", 1);
-            oled_text(8, 56, "Pressione B para voltar", 1);
-            oled_update();
-            
-            // Aguarda pressão de B para voltar ao menu
             while (!back_pressed()) {
-                sleep_ms(50);
                 web_poll(ctx);
+                oled_clear();
+                draw_frame();
+                oled_rect(6, 4, 116, 12, 1);
+                oled_text(20, 7, "CONEXAO WiFi", 0);
+                oled_text(8, 20, web_status_string(), 1);
+                oled_text(8, 28, web_ip_string(), 1);
+                oled_text(8, 40, "Acesse pelo navegador", 1);
+                oled_text(8, 48, "do seu celular", 1);
+                oled_text(8, 56, "Pressione B para voltar", 1);
+                oled_update();
+                sleep_ms(50);
             }
             while (back_pressed()) {
                 sleep_ms(50);
